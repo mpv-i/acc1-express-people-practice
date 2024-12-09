@@ -3,8 +3,69 @@ const people = express.Router();
 // express.Router alloes us to have almost a mini-app for one resource in one place, 
 //instead of having them all in the same place
 
-const peopleArr = require('../data/people')
+//const peopleArr = require('../data/people')
 
+const {
+    getAll,
+    getOne,
+    createOne,
+    updateOne,
+    deleteOne
+} = require("../queries/people")
+
+people.get("/", async (request, response) => {
+    try {
+        const people = await getAll();
+        res.status(201).json({payload: people});
+    } catch (error) {
+        res.status(404).json({payload: error});
+    }
+});
+
+people.get("/;id", async (request, response) => {
+    try {
+        const {id} = request.params;
+        const people = await getOnePerson(id);
+        response.status(200).json({playload : person});
+    } catch (error) {
+        response.status(404).json({playload : error});
+    }
+});
+
+
+people.post("/", async (request, response) =>{
+    try {
+        const person = request.body;
+        const newPerson = await createOne(person)
+        response.status(201).json({playload : newPerson});
+    } catch (error) {
+        response.status(404).json({playload : error});
+    };
+});
+
+people.put("/:id",async(request, response) =>{
+    try {
+    const {id} = request.params;
+    const person = request.body;
+    const updatePerson = await updateOne(id, person);
+    respomse.status(200).json({playload : updatePerson});
+    } catch (error) {
+    response.status(404).json({playload : error});
+    };
+});
+
+people.delete("/:id", async (request, response) =>{
+    try {
+        const {id} = request.params;
+        const deletedPerson = await deleteOne(id);
+        response.status(200).json({playload : deletedPerson});
+    } catch (error) {
+        response.status(404).json({playload : error});
+    };
+});
+
+
+/*
 //get ALL people : "/people"
 people.get("/", (request, response) => {
     response.status(200).json(peopleArr);
@@ -87,5 +148,6 @@ people.delete("/:id", (request, response)=> {
         response.status(404).json({error});
     }
 });
+*/
 
 module.exports = people
